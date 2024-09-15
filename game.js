@@ -1,18 +1,23 @@
 var userClickedPattern = [];
 var gamePattern = [];
 var buttonColours = ["red", "blue", "green", "yellow"];
-var randomChosenColour = buttonColours[nextSequence()]; 
+var level = 0;
 
-gamePattern.push(randomChosenColour);
 
-$("document").trigger("keydown",nextSequence());
+
+$(document).on("keydown",function(){
+    nextSequence();
+    console.log("keypress detected");
+});
 
 function nextSequence() {
     var randomNumber = Math.floor(Math.random() * 4);
-    return randomNumber; 
+    var randomChosenColour = buttonColours[randomNumber]; 
+    gamePattern.push(randomChosenColour);
+    $("#" + randomChosenColour).fadeOut(100).fadeIn(100).fadeOut(100).fadeIn(100); 
+    level = level + 1; 
+    $("h1").text("Level " + level); 
 }
-
-$("#" + randomChosenColour).fadeOut(100).fadeIn(100).fadeOut(100).fadeIn(100); 
 
 // click listener
 $('div[type="button"]').on("click",function() {
@@ -20,8 +25,22 @@ $('div[type="button"]').on("click",function() {
     userClickedPattern.push(userChosenColour);
     playSound(userChosenColour);
     animate(userChosenColour);
-
+    checkAnswer(userClickedPattern[userClickedPattern.length - 1]);
 });
+
+//checking the answers
+function checkAnswer(currentLevel) {
+    if (currentLevel == gamePattern[gamePattern.length - 1]){
+        console.log("current level:" + currentLevel);
+        console.log("game pattern[-1]:" + gamePattern[gamePattern.length -1 ]);
+        console.log("Success");
+    } else {
+        console.log("Wrong");
+    }
+    console.log("user pattern: " + userClickedPattern);
+    console.log("game pattern: " + gamePattern);
+
+}
 
 
 // function for playing sound depending on colour chosen
