@@ -2,22 +2,27 @@ var userClickedPattern = [];
 var gamePattern = [];
 var buttonColours = ["red", "blue", "green", "yellow"];
 var level = 0;
-
+var started = false; 
 
 
 $(document).on("keydown",function(){
-    nextSequence();
-    console.log("keypress detected");
+    if(!started){
+        $("h1").text("Level " + level); 
+        nextSequence();
+        started = true;
+        console.log("keypress detected"); 
+    }
+    
 });
 
 function nextSequence() {
+
     userClickedPattern = [];
     level = level + 1; 
     var randomNumber = Math.floor(Math.random() * 4);
     var randomChosenColour = buttonColours[randomNumber]; 
     gamePattern.push(randomChosenColour);
-    $("#" + randomChosenColour).fadeOut(100).fadeIn(100).fadeOut(100).fadeIn(100); 
-    
+    $("#" + randomChosenColour).fadeOut(100).fadeIn(100).fadeOut(100).fadeIn(100);  
     $("h1").text("Level " + level); 
 }
 
@@ -32,11 +37,10 @@ $('div[type="button"]').on("click",function() {
 
 //checking the answers
 function checkAnswer(currentLevel) {
-    if (gamePattern[currentLevel] === gamePattern[currentLevel]){
-        console.log("current level:" + currentLevel);
-        console.log("game pattern[-1]:" + gamePattern[gamePattern.length -1 ]);
-        console.log("Success");
-        if (userClickedPattern.length == gamePattern.length){
+    if (gamePattern[currentLevel] === userClickedPattern[currentLevel]){
+        console.log(gamePattern[currentLevel]);
+        console.log(userClickedPattern[currentLevel]);
+        if (userClickedPattern.length === gamePattern.length){
             setTimeout(function () {
                 nextSequence()
             }, 1000); 
@@ -46,6 +50,15 @@ function checkAnswer(currentLevel) {
         console.log("Wrong");
         var gameOver = new Audio('sounds/wrong.mp3');
         gameOver.play();
+        $('body').addClass("game-over");
+        setTimeout(function () {
+            $('body').removeClass("game-over")
+        }, 200);
+        $("h1").text("Game Over, Press Any Key to Restart");
+        setTimeout(function () {
+            startOver()
+        }, 2000);
+        
     }
     console.log("user pattern: " + userClickedPattern);
     console.log("game pattern: " + gamePattern);
@@ -85,4 +98,11 @@ function animate(currentColour) {
     setTimeout(function() {
         $("#" + currentColour).removeClass("pressed");
     },100); 
+}
+
+function startOver(){
+    level = 0;
+    gamePattern = [];
+    started = false;
+    $("h1").text("Press A Key to Start");
 }
