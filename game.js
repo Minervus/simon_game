@@ -11,11 +11,13 @@ $(document).on("keydown",function(){
 });
 
 function nextSequence() {
+    userClickedPattern = [];
+    level = level + 1; 
     var randomNumber = Math.floor(Math.random() * 4);
     var randomChosenColour = buttonColours[randomNumber]; 
     gamePattern.push(randomChosenColour);
     $("#" + randomChosenColour).fadeOut(100).fadeIn(100).fadeOut(100).fadeIn(100); 
-    level = level + 1; 
+    
     $("h1").text("Level " + level); 
 }
 
@@ -25,17 +27,25 @@ $('div[type="button"]').on("click",function() {
     userClickedPattern.push(userChosenColour);
     playSound(userChosenColour);
     animate(userChosenColour);
-    checkAnswer(userClickedPattern[userClickedPattern.length - 1]);
+    checkAnswer(userClickedPattern.length-1);
 });
 
 //checking the answers
 function checkAnswer(currentLevel) {
-    if (currentLevel == gamePattern[gamePattern.length - 1]){
+    if (gamePattern[currentLevel] === gamePattern[currentLevel]){
         console.log("current level:" + currentLevel);
         console.log("game pattern[-1]:" + gamePattern[gamePattern.length -1 ]);
         console.log("Success");
+        if (userClickedPattern.length == gamePattern.length){
+            setTimeout(function () {
+                nextSequence()
+            }, 1000); 
+        }
+
     } else {
         console.log("Wrong");
+        var gameOver = new Audio('sounds/wrong.mp3');
+        gameOver.play();
     }
     console.log("user pattern: " + userClickedPattern);
     console.log("game pattern: " + gamePattern);
